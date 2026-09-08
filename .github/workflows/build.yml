@@ -9,18 +9,19 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: true
+        submodules: recursive
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
+    - name: Configure CMake
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
-    - name: Build Solution
-      run: msbuild themida-deobf.sln /p:Configuration=Release /p:Platform=x64 /p:IncludePath="$(MSBuildProjectDirectory)\ThemidaProject;$(MSBuildProjectDirectory)\zasm\include"
+    - name: Build Project
+      run: cmake --build build --config Release
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: themida-deobf-exe
         path: |
-          **/Release/*.exe
-          **/x64/Release/*.exe
+          build/**/*.exe
+          build/Release/*.exe
+          build/ThemidaProject/Release/*.exe
