@@ -15,7 +15,9 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Build Project
-      run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64 /p:AdditionalIncludeDirectories="ThemidaProject;zasm/include"
+      env:
+        CL: "/I\"${{ github.workspace }}\\ThemidaProject\" /I\"${{ github.workspace }}\\zasm\\include\""
+      run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
