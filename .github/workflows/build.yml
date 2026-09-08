@@ -11,23 +11,30 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build zasm via CMake
-      run: |
-        cmake -S zasm -B zasm/build -A x64
-        cmake --build zasm/build --config Release
-
-    - name: Add MSBuild to PATH
+    - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Build Themida Project
-      env:
-        CL: "/I\"${{ github.workspace }}\\ThemidaProject\" /I\"${{ github.workspace }}\\zasm\\include\""
-      run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64
+    - name: Fetch Missing Dependencies & Build
+      shell: powershell
+      run: |
+        # 1. Клонируем zasm напрямую, если папка пуста
+        if (-not (Test-Path "zasm/include")) {
+            git clone --recursive https://github.com/m417z/zasm.git zasm_repo
+            $env:ZASM_INC = "$(Get-Location)\zasm_repo\include"
+        } else {
+            $env:ZASM_INC = "$(Get-Location)\zasm\include"
+        }
+
+        # 2. Собираем проект
+        $proj = Get-ChildItem -Recurse -Filter "*.vcxproj" | Select-Object -First 1
+        $inc = "$((Get-Location).Path)\ThemidaProject;$env:ZASM_INC"
+        
+        msbuild $proj.FullName /p:Configuration=Release /p:Platform=x64 /p:IncludePath="$inc"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: themida-deobf-exe
         path: |
-          **/Release/*.exe
-          **/x64/Release/*.exe
+          **/*.exe
+          !**/*vshost*.exe
