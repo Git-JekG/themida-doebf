@@ -1,0 +1,24 @@
+name: Build C++ Project
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Build Solution
+      run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: themida-deobf-exe
+        path: |
+          x64/Release/*.exe
+          ThemidaProject/x64/Release/*.exe
