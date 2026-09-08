@@ -8,6 +8,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -21,3 +23,4 @@ jobs:
         name: themida-deobf-exe
         path: |
           **/Release/*.exe
+          **/x64/Release/*.exe
