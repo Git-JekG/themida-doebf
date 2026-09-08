@@ -11,17 +11,16 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Configure CMake
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
 
     - name: Build Project
-      run: cmake --build build --config Release
+      run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64 /p:AdditionalIncludeDirectories="ThemidaProject;zasm/include"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: themida-deobf-exe
         path: |
-          build/**/*.exe
-          build/Release/*.exe
-          build/ThemidaProject/Release/*.exe
+          **/Release/*.exe
+          **/x64/Release/*.exe
