@@ -9,13 +9,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: true
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
     - name: Build Solution
-      run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64
+      run: msbuild themida-deobf.sln /p:Configuration=Release /p:Platform=x64 /p:IncludePath="$(MSBuildProjectDirectory)\ThemidaProject;$(MSBuildProjectDirectory)\zasm\include"
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
