@@ -11,10 +11,15 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Build zasm via CMake
+      run: |
+        cmake -S zasm -B zasm/build -A x64
+        cmake --build zasm/build --config Release
+
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Build Project
+    - name: Build Themida Project
       env:
         CL: "/I\"${{ github.workspace }}\\ThemidaProject\" /I\"${{ github.workspace }}\\zasm\\include\""
       run: msbuild ThemidaProject/ThemidaProject.vcxproj /p:Configuration=Release /p:Platform=x64
