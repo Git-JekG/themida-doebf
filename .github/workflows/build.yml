@@ -8,18 +8,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
 
     - name: Download zasm source
       shell: powershell
       run: |
-        if (-not (Test-Path "zasm/CMakeLists.txt")) {
-            Invoke-WebRequest -Uri "https://github.com/m417z/zasm/archive/refs/heads/master.zip" -OutFile "zasm.zip"
-            Expand-Archive -Path "zasm.zip" -DestinationPath "."
-            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "zasm"
-            Rename-Item -Path "zasm-master" -NewName "zasm"
-        }
+        Invoke-WebRequest -Uri "https://github.com/m417z/zasm/archive/refs/heads/main.zip" -OutFile "zasm.zip"
+        Expand-Archive -Path "zasm.zip" -DestinationPath "."
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "zasm"
+        Rename-Item -Path "zasm-main" -NewName "zasm"
 
     - name: Configure CMake
       run: cmake -B build -S . -A x64
